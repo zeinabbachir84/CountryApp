@@ -21,11 +21,11 @@ struct Currency: Codable, Hashable, Identifiable {
 struct Country: Codable, Identifiable, Hashable {
     var id: String { alpha2Code ?? name }
     let name: String
-    let alpha2Code: String?
-    let alpha3Code: String?
+    let alpha2Code: String? // 2-letter ISO country code
+    let alpha3Code: String? // 3-letter ISO country code
     let capital: String?
     let region: String?
-    let latlng: [Double]?
-    let flag: String? // URL string
+    let latlng: [Double]? // an array of latitude and longitude coordinates
+    let flag: String?
     let currencies: [Currency]?
 }
