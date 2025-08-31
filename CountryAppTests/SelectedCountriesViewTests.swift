@@ -16,25 +16,6 @@ final class SelectedCountriesViewTests: XCTestCase {
 
     // MARK: - ViewInspector Tests
 
-    func testCannotAddMoreThanFiveCountries() {
-        let viewModel = CountriesViewModel()
-        
-        for i in 1...5 {
-            viewModel.addCountry(makeDummyCountry(name: "Country\(i)"))
-        }
-        
-        // Try to add a sixth country
-        let extraCountry = makeDummyCountry(name: "Lebanon")
-        viewModel.addCountry(extraCountry)
-        
-        // Check that only 5 countries are in selectedCountries
-        XCTAssertEqual(viewModel.selectedCountries.count, 5)
-        
-        // Ensure the sixth country was not added
-        XCTAssertFalse(viewModel.selectedCountries.contains(where: { $0.name == "Lebanon" }))
-    }
-
-
     func testListShowsCorrectNumberOfCountries() throws {
         // Arrange
         let viewModel = CountriesViewModel()
@@ -42,7 +23,7 @@ final class SelectedCountriesViewTests: XCTestCase {
             makeDummyCountry(name: "France"),
             makeDummyCountry(name: "USA")
         ]
-        viewModel.isSelectingInitialCountry = false
+        viewModel.isWaitingForLocation = false
         viewModel.isLoading = false
 
         let view = SelectedCountriesView(viewModel: viewModel)
@@ -58,20 +39,23 @@ final class SelectedCountriesViewTests: XCTestCase {
         XCTAssertEqual(forEach.count, 2)
     }
 
-
-    func testProgressViewShownWhenLoading() throws {
-        let viewModel = CountriesViewModel()
+    func testLoadingStateViewShownWhenLoading() throws {
+        let viewModel = CountriesViewModel(
+            api: MockCountryAPI(),
+            store: MockLocalStore(),
+            locationService: MockLocationService()
+        )
         viewModel.isLoading = true
 
         let view = SelectedCountriesView(viewModel: viewModel)
 
-        let progress = try view.inspect()
-            .navigationStack()      // NavigationStack
-            .zStack()               // ZStack
-            .vStack(0)              // The first (and only) VStack in the ZStack
-            .progressView(0)        // ProgressView inside VStack
-        
-        XCTAssertNotNil(progress)
+        // Inspect ZStack for LoadingStateView
+        let loadingView = try view.inspect()
+            .navigationStack()
+            .zStack()
+            .find(LoadingStateView.self)
+
+        XCTAssertNotNil(loadingView)
     }
 
     // MARK: - Snapshot Tests

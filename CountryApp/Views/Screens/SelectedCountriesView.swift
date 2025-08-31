@@ -5,14 +5,13 @@
 //  Created by Zeinab Bachir on 29/08/2025.
 //
 
-
 import SwiftUI
 
 struct SelectedCountriesView: View {
     @ObservedObject var viewModel: CountriesViewModel
     @State private var showSearch = false
     @AppStorage("hasSelectedLocations") private var hasSelectedLocations = false
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -32,11 +31,19 @@ struct SelectedCountriesView: View {
                         text: "Loading countries…"
                     )
                 } else if let message = viewModel.errorMessage {
-                    EmptyStateView(
-                        systemImage: "exclamationmark.triangle",
-                        text: "Error:\n\(message)",
-                        color: .red
-                    )
+                    VStack(spacing: 16) {
+                        EmptyStateView(
+                            systemImage: "exclamationmark.triangle",
+                            text: "Error:\n\(message)",
+                            color: .red
+                        )
+                        Button {
+                            Task { await viewModel.loadInitialData() }
+                        } label: {
+                            Label("Retry", systemImage: "arrow.clockwise")
+                        }
+                        .buttonStyle(.borderedProminent)
+                    }
                 } else if viewModel.selectedCountries.isEmpty {
                     EmptyStateView(
                         systemImage: "globe",
@@ -67,16 +74,15 @@ struct SelectedCountriesView: View {
                             .font(.headline)
                     }
                 }
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button { showSearch = true } label: {
                         Image(systemName: "plus")
                     }
                     .accessibilityLabel("Add a country")
+                    .disabled(viewModel.selectedCountries.count >= 5)
                 }
             }
+            .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(Color(.systemBackground), for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .sheet(isPresented: $showSearch) {
@@ -90,38 +96,5 @@ struct SelectedCountriesView: View {
                 }
             }
         }
-    }
-}
-
-
-// MARK: - Preview
-
-struct SelectedCountriesView_Previews: PreviewProvider {
-    static var previews: some View {
-        let mockViewModel = CountriesViewModel()
-        mockViewModel.selectedCountries = [
-            Country(
-                name: "France",
-                alpha2Code: "FR",
-                alpha3Code: "FRA",
-                capital: "Paris",
-                region: "Europe",
-                latlng: [46.0, 2.0],
-                flag: "https://flagcdn.com/fr.svg",
-                currencies: [Currency(code: "EUR", name: "Euro", symbol: "€")]
-            ),
-            Country(
-                name: "United States",
-                alpha2Code: "US",
-                alpha3Code: "USA",
-                capital: "Washington D.C.",
-                region: "Americas",
-                latlng: [38.0, -97.0],
-                flag: "https://flagcdn.com/us.svg",
-                currencies: [Currency(code: "USD", name: "US Dollar", symbol: "$")]
-            )
-        ]
-        
-        return SelectedCountriesView(viewModel: mockViewModel)
     }
 }

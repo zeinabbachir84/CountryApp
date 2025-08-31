@@ -11,30 +11,47 @@
 // the protocol into its own file would be recommended.
 //
 
-
 import Foundation
 
 protocol CountryAPI {
     func fetchAllCountries() async throws -> [Country]
 }
 
+enum CountryError: LocalizedError {
+    case network
+    case decoding
+    case locationDenied
+    case unknown
+    
+    var errorDescription: String? {
+        switch self {
+        case .network: "Failed to fetch countries. Please try again."
+        case .decoding: "Data could not be decoded."
+        case .locationDenied: "Location permission denied."
+        case .unknown: "An unexpected error occurred."
+        }
+    }
+}
+
 final class CountryService: CountryAPI {
     private let session: URLSession
-
+    
     init(session: URLSession = .shared) {
         self.session = session
     }
-
+    
     func fetchAllCountries() async throws -> [Country] {
-        // Fetch only the needed fields to reduce payload
         let url = URL(string: "https://restcountries.com/v2/all?fields=name,alpha2Code,alpha3Code,capital,region,latlng,flag,currencies")!
         let (data, response) = try await session.data(from: url)
         
         guard let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
-            throw URLError(.badServerResponse)
+            throw CountryError.network
         }
         
-        let decoder = JSONDecoder()
-        return try decoder.decode([Country].self, from: data)
+        do {
+            return try JSONDecoder().decode([Country].self, from: data)
+        } catch {
+            throw CountryError.decoding
+        }
     }
 }

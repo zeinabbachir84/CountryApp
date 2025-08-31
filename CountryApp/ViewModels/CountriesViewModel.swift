@@ -1,101 +1,108 @@
+
+//
+//  CountriesViewModel.swift
+//  CountryApp
+//
+
 import Foundation
 import CoreLocation
 
+protocol LocationProviding {
+    func requestLocation() async throws -> CLLocationCoordinate2D?
+}
+
 @MainActor
 final class CountriesViewModel: ObservableObject {
-    // Dependencies
+    // MARK: - Published state
+    @Published var allCountries: [Country] = []
+    @Published var selectedCountries: [Country] = []
+    @Published var searchQuery: String = ""
+    @Published var isWaitingForLocation: Bool = false
+    @Published var isLoading: Bool = false
+    @Published var errorMessage: String?
+
+    // MARK: - Dependencies
     private let api: CountryAPI
     private let store: LocalStore
-    
-    // Published state
-    @Published private(set) var allCountries: [Country] = []
-    @Published var selectedCountries: [Country] = [] // up to 5
-    @Published var searchQuery: String = ""
-    @Published var isLoading: Bool = false
-    @Published var isSelectingInitialCountry: Bool = false
-    @Published var errorMessage: String?
-    
-    // MARK: - Initialization
-    init(api: CountryAPI = CountryService(), store: LocalStore = UserDefaultsStore()) {
+    private let locationService: LocationProviding
+
+    // MARK: - Init
+    init(api: CountryAPI, store: LocalStore, locationService: LocationProviding) {
         self.api = api
         self.store = store
+        self.locationService = locationService
     }
-    
-    // MARK: - Loading Initial Data
-func loadInitialData() async {
+
+    // Convenience initializer for previews / production
+    convenience init() {
+        self.init(api: CountryService(), store: UserDefaultsStore(), locationService: LocationService())
+    }
+
+    // MARK: - Loading Data
+    func loadInitialData() async {
         isLoading = true
-        await loadCountries()
-        restoreSelection()
-
-        // If countries already selected, no need to pick default/nearest
-        guard selectedCountries.isEmpty else {
-            isLoading = false
-            return
-        }
-
-        isSelectingInitialCountry = true
-        defer {
-            isSelectingInitialCountry = false
-            isLoading = false
-        }
-
-        do {
-            if let userLocation = try await LocationService.shared.requestLocation() {
-                addNearestCountry(to: userLocation)
-            } else {
-                addDefaultCountry()
-            }
-        } catch {
-            addDefaultCountry()
-        }
-    }
-    
-    // MARK: - Networking
-    func loadCountries() async {
         do {
             let countries = try await api.fetchAllCountries()
-            allCountries = countries.sorted { $0.name < $1.name }
+            self.allCountries = countries.sorted { $0.name < $1.name }
+            restoreSelection(from: countries)
+
+            guard selectedCountries.isEmpty else {
+                isLoading = false
+                return
+            }
+
+            isWaitingForLocation = true
+            defer { isWaitingForLocation = false }
+
+            do {
+                if let coordinate = try await locationService.requestLocation() {
+                    addNearestCountry(to: coordinate)
+                } else {
+                    addDefaultCountry()
+                }
+            } catch {
+                addDefaultCountry()
+            }
+
         } catch {
             errorMessage = error.localizedDescription
         }
+        isLoading = false
     }
-    
-    // MARK: - Selection Management
+
+    // MARK: - Selection
     func addCountry(_ country: Country) {
         guard selectedCountries.count < 5 else { return }
-        guard !selectedCountries.contains(country) else { return }
+        guard !selectedCountries.contains(where: { $0.id == country.id }) else { return }
+
         selectedCountries.append(country)
         persistSelection()
     }
-    
+
     func removeCountry(_ country: Country) {
-        selectedCountries.removeAll { $0 == country }
+        selectedCountries.removeAll { $0.id == country.id }
         persistSelection()
     }
-    
+
     private func persistSelection() {
         store.saveSelectedCountries(selectedCountries.map { $0.id })
     }
-    
-    private func restoreSelection() {
+
+    private func restoreSelection(from countries: [Country]) {
         let ids = store.loadSelectedCountries()
-        selectedCountries = allCountries.filter { ids.contains($0.id) }
+        selectedCountries = countries.filter { ids.contains($0.id) }
     }
-    
-    var isWaitingForLocation: Bool {
-        isSelectingInitialCountry && selectedCountries.isEmpty
-    }
-    
-    // MARK: - Fallback & Nearest Country
+
+    // MARK: - Location Helpers
     private func addDefaultCountry() {
         if let france = allCountries.first(where: { $0.name == "France" }) {
             addCountry(france)
         }
     }
-    
+
     private func addNearestCountry(to location: CLLocationCoordinate2D) {
         guard !allCountries.isEmpty else { return }
-        
+
         let nearest = allCountries.min { a, b in
             guard let aCoords = a.latlng, let bCoords = b.latlng else { return false }
             let aDistance = CLLocation(latitude: aCoords[0], longitude: aCoords[1])
@@ -104,16 +111,16 @@ func loadInitialData() async {
                 .distance(from: CLLocation(latitude: location.latitude, longitude: location.longitude))
             return aDistance < bDistance
         }
-        
+
         if let nearest = nearest {
             addCountry(nearest)
         }
     }
-    
+
     // MARK: - Search
     var filteredCountries: [Country] {
-        let q = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !q.isEmpty else { return allCountries }
-        return allCountries.filter { $0.name.localizedCaseInsensitiveContains(q) }
+        let query = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return allCountries }
+        return allCountries.filter { $0.name.localizedCaseInsensitiveContains(query) }
     }
 }

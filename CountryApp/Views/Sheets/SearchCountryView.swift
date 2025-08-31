@@ -13,19 +13,36 @@ struct SearchCountryView: View {
 
     var body: some View {
         NavigationStack {
-            List(viewModel.filteredCountries) { country in
-                let isDisabled = viewModel.selectedCountries.contains(country)
-                                || viewModel.selectedCountries.count >= 5
-                Button {
-                    viewModel.addCountry(country)
-                } label: {
-                    CountryRow(country: country)
+            List {
+                // Section: Already Selected
+                if !alreadySelectedCountries.isEmpty {
+                    Section("Already Selected") {
+                        ForEach(alreadySelectedCountries) { country in
+                            CountryRow(country: country)
+                                .opacity(0.5)
+                                .disabled(true)
+                        }
+                    }
                 }
-                .disabled(isDisabled)
-                .opacity(isDisabled ? 0.5 : 1.0)
+                
+                // Section: Available countries
+                if !availableCountries.isEmpty {
+                    Section("Available") {
+                        ForEach(availableCountries) { country in
+                            Button {
+                                viewModel.addCountry(country)
+                                dismiss() // ✅ auto-close after adding
+                            } label: {
+                                CountryRow(country: country)
+                            }
+                        }
+                    }
+                }
             }
-            .searchable(text: $viewModel.searchQuery,
-                        placement: .navigationBarDrawer(displayMode: .always))
+            .searchable(
+                text: $viewModel.searchQuery,
+                placement: .navigationBarDrawer(displayMode: .always)
+            )
             .autocapitalization(.none)
             .disableAutocorrection(true)
             .navigationTitle("Add Country")
@@ -36,5 +53,17 @@ struct SearchCountryView: View {
                 }
             }
         }
+    }
+
+    // MARK: - Helpers
+    private var availableCountries: [Country] {
+        viewModel.filteredCountries.filter { country in
+            !viewModel.selectedCountries.contains(country) &&
+            viewModel.selectedCountries.count < 5
+        }
+    }
+
+    private var alreadySelectedCountries: [Country] {
+        viewModel.filteredCountries.filter { viewModel.selectedCountries.contains($0) }
     }
 }

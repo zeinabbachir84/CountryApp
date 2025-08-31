@@ -12,7 +12,13 @@ import SwiftData
 struct CountryAppApp: App {
     var body: some Scene {
         WindowGroup {
-            SelectedCountriesView(viewModel: CountriesViewModel())
+            SelectedCountriesView(
+                viewModel: CountriesViewModel(
+                    api: CountryService(),
+                    store: UserDefaultsStore(),
+                    locationService: LocationService()
+                )
+            )
         }
     }
 }
