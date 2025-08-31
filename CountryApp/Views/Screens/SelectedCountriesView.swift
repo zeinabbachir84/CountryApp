@@ -12,7 +12,7 @@ struct SelectedCountriesView: View {
     @ObservedObject var viewModel: CountriesViewModel
     @State private var showSearch = false
     @AppStorage("hasSelectedLocations") private var hasSelectedLocations = false
-
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -57,7 +57,17 @@ struct SelectedCountriesView: View {
                     .listStyle(.insetGrouped)
                 }
             }
-            .navigationTitle("Countries")
+            .navigationTitle("")
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    HStack(spacing: 8) {
+                        Image("icon")
+                            .foregroundColor(.accentColor)
+                        Text("Countries")
+                            .font(.headline)
+                    }
+                }
+            }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
