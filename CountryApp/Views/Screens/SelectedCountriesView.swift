@@ -5,10 +5,10 @@
 //  Created by Zeinab Bachir on 29/08/2025.
 //
 
+
 import SwiftUI
 
 struct SelectedCountriesView: View {
-    
     @ObservedObject var viewModel: CountriesViewModel
     @State private var showSearch = false
     @AppStorage("hasSelectedLocations") private var hasSelectedLocations = false
@@ -17,54 +17,35 @@ struct SelectedCountriesView: View {
         NavigationStack {
             ZStack {
                 if viewModel.isWaitingForLocation && !hasSelectedLocations {
-                    // First launch: fetching current location
-                    VStack(spacing: 8) {
-                        ProgressView()
-                        Text("Fetching your current location…\nPlease wait")
-                            .multilineTextAlignment(.center)
-                            .foregroundColor(.secondary)
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    LoadingStateView(
+                        systemImage: "location.circle",
+                        text: "Fetching your current location…\nPlease wait"
+                    )
                 } else if viewModel.isWaitingForLocation {
-                    // Returning user: just fetching location
-                    VStack(spacing: 8) {
-                        ProgressView()
-                        Text("Fetching your location…")
-                            .multilineTextAlignment(.center)
-                            .foregroundColor(.secondary)
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    LoadingStateView(
+                        systemImage: "location.circle",
+                        text: "Fetching your location…"
+                    )
                 } else if viewModel.isLoading {
-                    // Loading countries after fetching location
-                    VStack(spacing: 8) {
-                        ProgressView()
-                        Text("Loading countries…")
-                            .multilineTextAlignment(.center)
-                            .foregroundColor(.secondary)
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    LoadingStateView(
+                        systemImage: "globe.europe.africa",
+                        text: "Loading countries…"
+                    )
                 } else if let message = viewModel.errorMessage {
-                    // Show error
-                    Text("Error: \(message)")
-                        .foregroundColor(.red)
-                        .multilineTextAlignment(.center)
-                        .padding()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    EmptyStateView(
+                        systemImage: "exclamationmark.triangle",
+                        text: "Error:\n\(message)",
+                        color: .red
+                    )
                 } else if viewModel.selectedCountries.isEmpty {
-                    // No countries selected
-                    Text("No countries selected.\nTap + to add up to 5 countries.")
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(.secondary)
-                        .padding()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    EmptyStateView(
+                        systemImage: "globe",
+                        text: "No countries selected.\nTap + to add up to 5 countries."
+                    )
                 } else {
-                    // Show list of countries
                     List {
                         ForEach(viewModel.selectedCountries) { country in
-                            NavigationLink(destination: Text("Detail view for \(country.name)")) {
+                            NavigationLink(destination: CountryDetailView(country: country)) {
                                 CountryRow(country: country)
                             }
                         }
@@ -74,7 +55,6 @@ struct SelectedCountriesView: View {
                         }
                     }
                     .listStyle(.insetGrouped)
-                    .ignoresSafeArea(edges: .bottom)
                 }
             }
             .navigationTitle("Countries")
@@ -84,6 +64,7 @@ struct SelectedCountriesView: View {
                     Button { showSearch = true } label: {
                         Image(systemName: "plus")
                     }
+                    .accessibilityLabel("Add a country")
                 }
             }
             .toolbarBackground(Color(.systemBackground), for: .navigationBar)
@@ -95,7 +76,6 @@ struct SelectedCountriesView: View {
             .onAppear {
                 Task {
                     await viewModel.loadInitialData()
-                    // Mark first launch as completed
                     hasSelectedLocations = !viewModel.selectedCountries.isEmpty
                 }
             }
@@ -103,24 +83,6 @@ struct SelectedCountriesView: View {
     }
 }
 
-// MARK: - CountryRow
-
-struct CountryRow: View {
-    let country: Country
-    var body: some View {
-        HStack {
-            Text(country.name)
-                .font(.headline)
-            Spacer()
-            if let capital = country.capital {
-                Text(capital)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-            }
-        }
-        .padding(.vertical, 4)
-    }
-}
 
 // MARK: - Preview
 
