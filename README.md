@@ -66,8 +66,10 @@ Cmd + U
 
 ---
 
+<<<<<<< HEAD
 ### Notes
 - Launch Screen uses a storyboard due to iOS requirements. All other screens are implemented in SwiftUI as requested in the task guidelines.
 
 ## 👩‍💻 Author
 - **Zeinab Bachir**
+
