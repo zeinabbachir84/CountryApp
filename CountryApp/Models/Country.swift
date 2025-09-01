@@ -28,4 +28,10 @@ struct Country: Codable, Identifiable, Hashable {
     let latlng: [Double]? // an array of latitude and longitude coordinates
     let flag: String?
     let currencies: [Currency]?
+    
+    var pngFlagURL: URL? {
+        guard let code = alpha2Code?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased(),
+              !code.isEmpty else { return nil }
+        return URL(string: "https://flagcdn.com/w320/\(code).png")
+    }
 }

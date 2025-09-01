@@ -8,15 +8,17 @@ import SwiftUI
 
 struct CountryRow: View {
     let country: Country
+    
     var body: some View {
         HStack {
-            if let flag = country.flag, let url = URL(string: flag) {
+            if let url = country.pngFlagURL {
                 AsyncImage(url: url) { image in
-                    image.resizable()
-                         .scaledToFit()
-                         .frame(width: 32, height: 20)
-                         .clipShape(RoundedRectangle(cornerRadius: 4))
-                         .shadow(radius: 1)
+                    image
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 32, height: 20)
+                        .clipShape(RoundedRectangle(cornerRadius: 4))
+                        .shadow(radius: 1)
                 } placeholder: {
                     Rectangle()
                         .fill(Color.secondary.opacity(0.2))
@@ -27,7 +29,9 @@ struct CountryRow: View {
             
             Text(country.name)
                 .font(.headline)
+            
             Spacer()
+            
             if let capital = country.capital {
                 Text(capital)
                     .font(.subheadline)
@@ -38,3 +42,5 @@ struct CountryRow: View {
         .accessibilityLabel("\(country.name), capital \(country.capital ?? "unknown")")
     }
 }
+
+
