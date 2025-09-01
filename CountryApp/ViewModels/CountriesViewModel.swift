@@ -1,4 +1,3 @@
-
 //
 //  CountriesViewModel.swift
 //  CountryApp
@@ -9,6 +8,7 @@ import CoreLocation
 
 protocol LocationProviding {
     func requestLocation() async throws -> CLLocationCoordinate2D?
+    var authorizationStatus: CLAuthorizationStatus { get }
 }
 
 @MainActor
@@ -26,46 +26,60 @@ final class CountriesViewModel: ObservableObject {
     private let store: LocalStore
     private let locationService: LocationProviding
 
-    // MARK: - Init
-    init(api: CountryAPI, store: LocalStore, locationService: LocationProviding) {
+    // MARK: - Initialization
+    init(api: CountryAPI = CountryService(),
+         store: LocalStore = UserDefaultsStore(),
+         locationService: LocationProviding = LocationService()) {
         self.api = api
         self.store = store
         self.locationService = locationService
     }
 
-    // Convenience initializer for previews / production
-    convenience init() {
-        self.init(api: CountryService(), store: UserDefaultsStore(), locationService: LocationService())
-    }
-
-    // MARK: - Loading Data
+    // MARK: - Loading initial data
     func loadInitialData() async {
         isLoading = true
         do {
+            // Load all countries
             let countries = try await api.fetchAllCountries()
-            self.allCountries = countries.sorted { $0.name < $1.name }
+            allCountries = countries.sorted { $0.name < $1.name }
+
+            // Restore previous selection
             restoreSelection(from: countries)
 
+            // If the user already has selected countries, skip location
             guard selectedCountries.isEmpty else {
                 isLoading = false
                 return
             }
 
+            // First launch: wait for location
             isWaitingForLocation = true
             defer { isWaitingForLocation = false }
 
-            do {
+            if locationService.authorizationStatus == .notDetermined {
+                // Ask for permission, wait for user choice
                 if let coordinate = try await locationService.requestLocation() {
                     addNearestCountry(to: coordinate)
                 } else {
                     addDefaultCountry()
                 }
-            } catch {
+            } else if locationService.authorizationStatus == .denied
+                        || locationService.authorizationStatus == .restricted {
+                // User denied/restricted: fallback to default
                 addDefaultCountry()
+            } else {
+                // Already authorized: get current location
+                if let coordinate = try await locationService.requestLocation() {
+                    addNearestCountry(to: coordinate)
+                } else {
+                    addDefaultCountry()
+                }
             }
 
         } catch {
             errorMessage = error.localizedDescription
+            // fallback to default country if error
+            if selectedCountries.isEmpty { addDefaultCountry() }
         }
         isLoading = false
     }
@@ -93,7 +107,7 @@ final class CountriesViewModel: ObservableObject {
         selectedCountries = countries.filter { ids.contains($0.id) }
     }
 
-    // MARK: - Location Helpers
+    // MARK: - Location helpers
     private func addDefaultCountry() {
         if let lebanon = allCountries.first(where: { $0.name == "Lebanon" }) {
             addCountry(lebanon)

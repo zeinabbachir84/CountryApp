@@ -42,21 +42,25 @@ final class CountriesViewModelTests: XCTestCase {
         let lebanon = makeDummyCountry(name: "Lebanon", latlng: [46, 2])
         mockAPI.countriesToReturn = [lebanon]
         mockLocation.coordinateToReturn = CLLocationCoordinate2D(latitude: 46, longitude: 2)
+        mockLocation.authorizationStatusToReturn = .authorizedWhenInUse
 
         await viewModel.loadInitialData()
 
         XCTAssertTrue(viewModel.selectedCountries.contains(lebanon))
     }
 
-    func testLoadInitialDataAddsDefaultCountryIfLocationFails() async {
+    func testLoadInitialDataAddsDefaultCountryIfLocationDenied() async {
         let lebanon = makeDummyCountry(name: "Lebanon")
         mockAPI.countriesToReturn = [lebanon]
-        mockLocation.shouldThrowError = true
+        mockLocation.shouldThrowError = false
+        mockLocation.coordinateToReturn = nil
+        mockLocation.authorizationStatusToReturn = .denied
 
         await viewModel.loadInitialData()
 
         XCTAssertTrue(viewModel.selectedCountries.contains(lebanon))
     }
+
 
     // MARK: - Selection
 
@@ -143,9 +147,13 @@ final class MockLocalStore: LocalStore {
 final class MockLocationService: LocationProviding {
     var coordinateToReturn: CLLocationCoordinate2D? = nil
     var shouldThrowError = false
+    var authorizationStatusToReturn: CLAuthorizationStatus = .authorizedWhenInUse
+
+    var authorizationStatus: CLAuthorizationStatus { authorizationStatusToReturn }
 
     func requestLocation() async throws -> CLLocationCoordinate2D? {
         if shouldThrowError { throw URLError(.notConnectedToInternet) }
         return coordinateToReturn
     }
 }
+
