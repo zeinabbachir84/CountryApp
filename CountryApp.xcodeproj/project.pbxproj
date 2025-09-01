@@ -30,6 +30,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7C40A0B72E6575E900A9AD3C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		7C8ABFFF2E61E8D900AEBF26 /* CountryApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CountryApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C8AC00E2E61E8DB00AEBF26 /* CountryAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CountryAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C8AC0182E61E8DB00AEBF26 /* CountryAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CountryAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -97,6 +98,7 @@
 		7C8ABFF62E61E8D900AEBF26 = {
 			isa = PBXGroup;
 			children = (
+				7C40A0B72E6575E900A9AD3C /* README.md */,
 				7C8AC0012E61E8D900AEBF26 /* CountryApp */,
 				7C8AC0112E61E8DB00AEBF26 /* CountryAppTests */,
 				7C8AC01B2E61E8DB00AEBF26 /* CountryAppUITests */,
