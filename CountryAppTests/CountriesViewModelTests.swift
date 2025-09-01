@@ -29,51 +29,51 @@ final class CountriesViewModelTests: XCTestCase {
     // MARK: - Load Countries
 
     func testLoadInitialDataFetchesCountries() async {
-        let france = makeDummyCountry(name: "France")
-        mockAPI.countriesToReturn = [france]
+        let lebanon = makeDummyCountry(name: "Lebanon")
+        mockAPI.countriesToReturn = [lebanon]
 
         await viewModel.loadInitialData()
 
         XCTAssertEqual(viewModel.allCountries.count, 1)
-        XCTAssertEqual(viewModel.allCountries.first?.name, "France")
+        XCTAssertEqual(viewModel.allCountries.first?.name, "Lebanon")
     }
 
     func testLoadInitialDataAddsNearestCountry() async {
-        let france = makeDummyCountry(name: "France", latlng: [46, 2])
-        mockAPI.countriesToReturn = [france]
+        let lebanon = makeDummyCountry(name: "Lebanon", latlng: [46, 2])
+        mockAPI.countriesToReturn = [lebanon]
         mockLocation.coordinateToReturn = CLLocationCoordinate2D(latitude: 46, longitude: 2)
 
         await viewModel.loadInitialData()
 
-        XCTAssertTrue(viewModel.selectedCountries.contains(france))
+        XCTAssertTrue(viewModel.selectedCountries.contains(lebanon))
     }
 
     func testLoadInitialDataAddsDefaultCountryIfLocationFails() async {
-        let france = makeDummyCountry(name: "France")
-        mockAPI.countriesToReturn = [france]
+        let lebanon = makeDummyCountry(name: "Lebanon")
+        mockAPI.countriesToReturn = [lebanon]
         mockLocation.shouldThrowError = true
 
         await viewModel.loadInitialData()
 
-        XCTAssertTrue(viewModel.selectedCountries.contains(france))
+        XCTAssertTrue(viewModel.selectedCountries.contains(lebanon))
     }
 
     // MARK: - Selection
 
     func testSelectCountryAddsToSelected() {
-        let france = makeDummyCountry(name: "France")
-        viewModel.addCountry(france)
+        let lebanon = makeDummyCountry(name: "Lebanon")
+        viewModel.addCountry(lebanon)
 
-        XCTAssertTrue(viewModel.selectedCountries.contains(france))
-        XCTAssertEqual(mockStore.savedIds, [france.id])
+        XCTAssertTrue(viewModel.selectedCountries.contains(lebanon))
+        XCTAssertEqual(mockStore.savedIds, [lebanon.id])
     }
 
     func testRemoveCountryFromSelected() {
-        let france = makeDummyCountry(name: "France")
-        viewModel.addCountry(france)
-        viewModel.removeCountry(france)
+        let lebanon = makeDummyCountry(name: "Lebanon")
+        viewModel.addCountry(lebanon)
+        viewModel.removeCountry(lebanon)
 
-        XCTAssertFalse(viewModel.selectedCountries.contains(france))
+        XCTAssertFalse(viewModel.selectedCountries.contains(lebanon))
         XCTAssertEqual(mockStore.savedIds, [])
     }
 

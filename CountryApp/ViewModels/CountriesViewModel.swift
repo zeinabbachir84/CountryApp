@@ -95,8 +95,8 @@ final class CountriesViewModel: ObservableObject {
 
     // MARK: - Location Helpers
     private func addDefaultCountry() {
-        if let france = allCountries.first(where: { $0.name == "France" }) {
-            addCountry(france)
+        if let lebanon = allCountries.first(where: { $0.name == "Lebanon" }) {
+            addCountry(lebanon)
         }
     }
 
