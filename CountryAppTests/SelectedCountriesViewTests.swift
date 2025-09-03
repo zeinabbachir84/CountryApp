@@ -40,11 +40,14 @@ final class SelectedCountriesViewTests: XCTestCase {
     }
 
     func testLoadingStateViewShownWhenLoading() throws {
+        let selectionManager = SelectionManager(store: MockLocalStore())
+        let locationManager = LocationManager(locationService: MockLocationService())
         let viewModel = CountriesViewModel(
             api: MockCountryAPI(),
-            store: MockLocalStore(),
-            locationService: MockLocationService()
+            selectionManager: selectionManager,
+            locationManager: locationManager
         )
+
         viewModel.isLoading = true
 
         let view = SelectedCountriesView(viewModel: viewModel)

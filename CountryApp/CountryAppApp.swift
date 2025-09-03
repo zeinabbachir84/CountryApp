@@ -15,8 +15,8 @@ struct CountryAppApp: App {
             SelectedCountriesView(
                 viewModel: CountriesViewModel(
                     api: CountryService(),
-                    store: UserDefaultsStore(),
-                    locationService: LocationService()
+                    selectionManager: SelectionManager(store: UserDefaultsStore()),
+                    locationManager: LocationManager(locationService: LocationService())
                 )
             )
         }

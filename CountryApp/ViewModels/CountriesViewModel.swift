@@ -16,120 +16,84 @@ final class CountriesViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
 
-    // MARK: - Dependencies
+    // MARK: - Managers / Dependencies
     private let api: CountryAPI
-    private let store: LocalStore
-    private let locationService: LocationProviding
+    private let selectionManager: SelectionManager
+    private let locationManager: LocationManager
 
     // MARK: - Initialization
     init(api: CountryAPI = CountryService(),
-         store: LocalStore = UserDefaultsStore(),
-         locationService: LocationProviding = LocationService()) {
+         selectionManager: SelectionManager = SelectionManager(),
+         locationManager: LocationManager = LocationManager()) {
         self.api = api
-        self.store = store
-        self.locationService = locationService
+        self.selectionManager = selectionManager
+        self.locationManager = locationManager
     }
 
-    // MARK: - Loading initial data
+    // MARK: - Public API
     func loadInitialData() async {
         isLoading = true
+        defer { isLoading = false }
+
         do {
-            // Load all countries
-            let countries = try await api.fetchAllCountries()
-            allCountries = countries.sorted { $0.name < $1.name }
+            try await loadAllCountries()
+            restoreSelectionFromManager()
 
-            // Restore previous selection
-            restoreSelection(from: countries)
+            guard selectedCountries.isEmpty else { return }
 
-            // If the user already has selected countries, skip location
-            guard selectedCountries.isEmpty else {
-                isLoading = false
-                return
-            }
-
-            // First launch: wait for location
             isWaitingForLocation = true
             defer { isWaitingForLocation = false }
 
-            if locationService.authorizationStatus == .notDetermined {
-                // Ask for permission, wait for user choice
-                if let coordinate = try await locationService.requestLocation() {
-                    addNearestCountry(to: coordinate)
-                } else {
-                    addDefaultCountry()
-                }
-            } else if locationService.authorizationStatus == .denied
-                        || locationService.authorizationStatus == .restricted {
-                // User denied/restricted: fallback to default
-                addDefaultCountry()
-            } else {
-                // Already authorized: get current location
-                if let coordinate = try await locationService.requestLocation() {
-                    addNearestCountry(to: coordinate)
-                } else {
-                    addDefaultCountry()
+            try await locationManager.handleLocationFlow(for: allCountries,
+                                                        selection: selectionManager)
+            // Sync the selection manager back to @Published
+            restoreSelectionFromManager()
+        } catch {
+            errorMessage = mapError(error)
+            if selectedCountries.isEmpty {
+                if let lebanon = allCountries.first(where: { $0.name == "Lebanon" }) {
+                    addCountry(lebanon)
                 }
             }
-
-        } catch {
-            errorMessage = error.localizedDescription
-            // fallback to default country if error
-            if selectedCountries.isEmpty { addDefaultCountry() }
         }
-        isLoading = false
     }
 
-    // MARK: - Selection
     func addCountry(_ country: Country) {
-        guard selectedCountries.count < 5 else { return }
-        guard !selectedCountries.contains(where: { $0.id == country.id }) else { return }
-
-        selectedCountries.append(country)
-        persistSelection()
+        selectionManager.addCountry(country)
+        selectedCountries = selectionManager.selectedCountries
     }
 
     func removeCountry(_ country: Country) {
-        selectedCountries.removeAll { $0.id == country.id }
-        persistSelection()
+        selectionManager.removeCountry(country)
+        selectedCountries = selectionManager.selectedCountries
     }
 
-    private func persistSelection() {
-        store.saveSelectedCountries(selectedCountries.map { $0.id })
-    }
-
-    private func restoreSelection(from countries: [Country]) {
-        let ids = store.loadSelectedCountries()
-        selectedCountries = countries.filter { ids.contains($0.id) }
-    }
-
-    // MARK: - Location helpers
-    private func addDefaultCountry() {
-        if let lebanon = allCountries.first(where: { $0.name == "Lebanon" }) {
-            addCountry(lebanon)
-        }
-    }
-
-    private func addNearestCountry(to location: CLLocationCoordinate2D) {
-        guard !allCountries.isEmpty else { return }
-
-        let nearest = allCountries.min { a, b in
-            guard let aCoords = a.latlng, let bCoords = b.latlng else { return false }
-            let aDistance = CLLocation(latitude: aCoords[0], longitude: aCoords[1])
-                .distance(from: CLLocation(latitude: location.latitude, longitude: location.longitude))
-            let bDistance = CLLocation(latitude: bCoords[0], longitude: bCoords[1])
-                .distance(from: CLLocation(latitude: location.latitude, longitude: location.longitude))
-            return aDistance < bDistance
-        }
-
-        if let nearest = nearest {
-            addCountry(nearest)
-        }
-    }
-
-    // MARK: - Search
     var filteredCountries: [Country] {
         let query = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !query.isEmpty else { return allCountries }
         return allCountries.filter { $0.name.localizedCaseInsensitiveContains(query) }
+    }
+
+    // MARK: - Private helpers
+    private func loadAllCountries() async throws {
+        let countries = try await api.fetchAllCountries()
+        allCountries = countries.sorted { $0.name < $1.name }
+    }
+
+    private func restoreSelectionFromManager() {
+        selectionManager.restoreSelection(from: allCountries)
+        selectedCountries = selectionManager.selectedCountries
+    }
+
+    private func mapError(_ error: Error) -> String {
+        if let countryError = error as? CountryError {
+            return countryError.errorDescription ?? "An unexpected error occurred."
+        }
+
+        if let locationError = error as? LocationError {
+            return locationError.errorDescription ?? "Unexpected location error."
+        }
+
+        return error.localizedDescription
     }
 }

@@ -15,7 +15,9 @@ final class CountriesViewModelTests: XCTestCase {
         mockAPI = MockCountryAPI()
         mockStore = MockLocalStore()
         mockLocation = MockLocationService()
-        viewModel = CountriesViewModel(api: mockAPI, store: mockStore, locationService: mockLocation)
+        let selectionManager = SelectionManager(store: mockStore)
+        let locationManager = LocationManager(locationService: mockLocation)
+        viewModel = CountriesViewModel(api: mockAPI, selectionManager: selectionManager, locationManager: locationManager)
     }
 
     override func tearDown() {
@@ -130,29 +132,3 @@ final class MockCountryAPI: CountryAPI {
         return countriesToReturn
     }
 }
-
-final class MockLocalStore: LocalStore {
-    var savedIds: [String] = []
-
-    func saveSelectedCountries(_ ids: [String]) {
-        savedIds = ids
-    }
-
-    func loadSelectedCountries() -> [String] {
-        savedIds
-    }
-}
-
-final class MockLocationService: LocationProviding {
-    var coordinateToReturn: CLLocationCoordinate2D? = nil
-    var shouldThrowError = false
-    var authorizationStatusToReturn: CLAuthorizationStatus = .authorizedWhenInUse
-
-    var authorizationStatus: CLAuthorizationStatus { authorizationStatusToReturn }
-
-    func requestLocation() async throws -> CLLocationCoordinate2D? {
-        if shouldThrowError { throw URLError(.notConnectedToInternet) }
-        return coordinateToReturn
-    }
-}
-
