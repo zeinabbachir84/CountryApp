@@ -20,7 +20,6 @@ struct Country: Codable, Identifiable, Hashable {
     let capital: String?
     let region: String?
     let latlng: [Double]? // an array of latitude and longitude coordinates
-    let flag: String?
     let currencies: [Currency]?
     
     var pngFlagURL: URL? {

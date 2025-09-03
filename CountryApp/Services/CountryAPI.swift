@@ -32,7 +32,6 @@ struct CountryDTO: Codable {
     let capital: String?
     let region: String?
     let latlng: [Double]?
-    let flag: String?
     let currencies: [Currency]?
 
     var pngFlagURL: String? {
@@ -49,7 +48,7 @@ final class CountryService: CountryAPI {
     }
 
     func fetchAllCountries() async throws -> [Country] {
-        let url = URL(string: "https://restcountries.com/v2/all?fields=name,alpha2Code,alpha3Code,capital,region,latlng,flag,currencies")!
+        let url = URL(string: "https://restcountries.com/v2/all?fields=name,alpha2Code,alpha3Code,capital,region,latlng,currencies")!
         let (data, response) = try await session.data(from: url)
 
         guard let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
@@ -65,7 +64,6 @@ final class CountryService: CountryAPI {
                 capital: dto.capital,
                 region: dto.region,
                 latlng: dto.latlng,
-                flag: nil, // not needed, pngFlagURL uses alpha2Code
                 currencies: dto.currencies
             )
         }
