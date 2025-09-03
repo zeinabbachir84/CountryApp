@@ -5,10 +5,6 @@
 
 import Foundation
 
-protocol CountryAPI {
-    func fetchAllCountries() async throws -> [Country]
-}
-
 final class CountryService: CountryAPI {
     private let session: URLSession
 

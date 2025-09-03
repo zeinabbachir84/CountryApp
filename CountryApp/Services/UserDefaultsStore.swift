@@ -7,12 +7,6 @@
 
 import Foundation
 
-protocol LocalStore {
-    func saveSelectedCountries(_ ids: [String])
-    func loadSelectedCountries() -> [String]
-    func loadSavedCountries(from countries: [Country]) -> [Country]
-}
-
 final class UserDefaultsStore: LocalStore {
     private let key = "selected_countries_ids"
     
