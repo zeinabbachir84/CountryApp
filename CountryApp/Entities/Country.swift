@@ -7,7 +7,7 @@
 
 
 // =============================================================
-// MARK: - File: Models/Country.swift
+// MARK: - File: Entities/Country.swift
 // =============================================================
 
 import Foundation

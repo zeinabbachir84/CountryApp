@@ -6,7 +6,7 @@
 
 
 // =============================================================
-// MARK: - File: Models/Currency.swift
+// MARK: - File: Entities/Currency.swift
 // =============================================================
 
 import Foundation
