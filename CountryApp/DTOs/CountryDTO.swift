@@ -21,3 +21,17 @@ struct CountryDTO: Codable {
         return "https://flagcdn.com/w320/\(code).png"
     }
 }
+
+extension CountryDTO {
+    func toEntity() -> Country {
+        Country(
+            name: name,
+            alpha2Code: alpha2Code,
+            alpha3Code: alpha3Code,
+            capital: capital,
+            region: region,
+            latlng: latlng,
+            currencies: currencies
+        )
+    }
+}
