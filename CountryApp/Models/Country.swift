@@ -1,5 +1,5 @@
 //
-//  Currency.swift
+//  Country.swift
 //  CountryApp
 //
 //  Created by Zeinab Bachir on 29/08/2025.
@@ -9,14 +9,8 @@
 // =============================================================
 // MARK: - File: Models/Country.swift
 // =============================================================
-import Foundation
 
-struct Currency: Codable, Hashable, Identifiable {
-    var id: String { code ?? name ?? UUID().uuidString }
-    let code: String?
-    let name: String?
-    let symbol: String?
-}
+import Foundation
 
 struct Country: Codable, Identifiable, Hashable {
     var id: String { alpha2Code ?? name }
