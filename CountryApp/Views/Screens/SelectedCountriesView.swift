@@ -86,8 +86,7 @@ struct SelectedCountriesView: View {
             .toolbarBackground(Color(.systemBackground), for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .sheet(isPresented: $showSearch) {
-                SearchCountryView(viewModel: viewModel)
-                    .presentationDetents([.medium, .large])
+                searchSheet
             }
             .onAppear {
                 Task {
@@ -97,4 +96,11 @@ struct SelectedCountriesView: View {
             }
         }
     }
+    
+    @ViewBuilder
+    private var searchSheet: some View {
+        SearchCountryView(viewModel: viewModel)
+            .presentationDetents([.medium, .large])
+    }
 }
+
