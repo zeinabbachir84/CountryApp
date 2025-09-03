@@ -114,7 +114,6 @@ final class CountriesViewModelTests: XCTestCase {
             capital: nil,
             region: "TestRegion",
             latlng: latlng,
-            flag: nil,
             currencies: []
         )
     }

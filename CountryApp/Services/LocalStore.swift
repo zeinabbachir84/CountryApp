@@ -5,7 +5,6 @@
 //  Created by Zeinab Bachir on 29/08/2025.
 //
 
-
 import Foundation
 
 protocol LocalStore {

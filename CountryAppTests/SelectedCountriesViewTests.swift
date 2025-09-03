@@ -97,7 +97,6 @@ final class SelectedCountriesViewTests: XCTestCase {
             capital: "Capital",
             region: "Region",
             latlng: [],
-            flag: nil,
             currencies: []
         )
     }
