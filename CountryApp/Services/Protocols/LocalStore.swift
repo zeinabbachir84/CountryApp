@@ -10,5 +10,4 @@ import Foundation
 protocol LocalStore {
     func saveSelectedCountries(_ ids: [String])
     func loadSelectedCountries() -> [String]
-    func loadSavedCountries(from countries: [Country]) -> [Country]
 }

@@ -18,10 +18,3 @@ final class UserDefaultsStore: LocalStore {
         UserDefaults.standard.stringArray(forKey: key) ?? []
     }
 }
-
-extension LocalStore {
-    func loadSavedCountries(from countries: [Country]) -> [Country] {
-        let savedIds = loadSelectedCountries()
-        return countries.filter { savedIds.contains($0.id) }
-    }
-}
