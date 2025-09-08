@@ -13,22 +13,22 @@ struct SearchCountryView: View {
 
     var body: some View {
         NavigationStack {
+            let sections = countrySections
             List {
                 // Section: Already Selected
-                if !alreadySelectedCountries.isEmpty {
+                if !sections.alreadySelected.isEmpty {
                     Section("Already Selected") {
-                        ForEach(alreadySelectedCountries) { country in
+                        ForEach(sections.alreadySelected) { country in
                             CountryRow(country: country)
                                 .opacity(0.5)
                                 .disabled(true)
                         }
                     }
                 }
-                
                 // Section: Available countries
-                if !availableCountries.isEmpty {
+                if !sections.available.isEmpty {
                     Section("Available") {
-                        ForEach(availableCountries) { country in
+                        ForEach(sections.available) { country in
                             Button {
                                 viewModel.addCountry(country)
                                 dismiss() // ✅ auto-close after adding
@@ -56,14 +56,18 @@ struct SearchCountryView: View {
     }
 
     // MARK: - Helpers
-    private var availableCountries: [Country] {
-        viewModel.filteredCountries.filter { country in
-            !viewModel.selectedCountries.contains(country) &&
-            viewModel.selectedCountries.count < 5
-        }
-    }
+    private var countrySections: (available: [Country], alreadySelected: [Country]) {
+        let selectedIds = Set(viewModel.selectedCountries.map { $0.id })
+        var available: [Country] = []
+        var alreadySelected: [Country] = []
 
-    private var alreadySelectedCountries: [Country] {
-        viewModel.filteredCountries.filter { viewModel.selectedCountries.contains($0) }
+        for country in viewModel.filteredCountries {
+            if selectedIds.contains(country.id) {
+                alreadySelected.append(country)
+            } else {
+                available.append(country)
+            }
+        }
+        return (available, alreadySelected)
     }
 }
