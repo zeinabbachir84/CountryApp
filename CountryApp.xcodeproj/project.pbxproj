@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		7C8AC04B2E623FB800AEBF26 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 7C8AC04A2E623FB800AEBF26 /* SnapshotTesting */; };
+		7C8AC04E2E62401500AEBF26 /* ViewInspector in Frameworks */ = {isa = PBXBuildFile; productRef = 7C8AC04D2E62401500AEBF26 /* ViewInspector */; };
+		7C8AC0532E6243E300AEBF26 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 7C8AC0522E6243E300AEBF26 /* SnapshotTesting */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		7C8AC00F2E61E8DB00AEBF26 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,14 +30,28 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7C40A0B72E6575E900A9AD3C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		7C8ABFFF2E61E8D900AEBF26 /* CountryApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CountryApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C8AC00E2E61E8DB00AEBF26 /* CountryAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CountryAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C8AC0182E61E8DB00AEBF26 /* CountryAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CountryAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		7C8AC05E2E62514700AEBF26 /* Exceptions for "CountryApp" folder in "CountryApp" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 7C8ABFFE2E61E8D900AEBF26 /* CountryApp */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		7C8AC0012E61E8D900AEBF26 /* CountryApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				7C8AC05E2E62514700AEBF26 /* Exceptions for "CountryApp" folder in "CountryApp" target */,
+			);
 			path = CountryApp;
 			sourceTree = "<group>";
 		};
@@ -59,6 +79,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7C8AC04E2E62401500AEBF26 /* ViewInspector in Frameworks */,
+				7C8AC0532E6243E300AEBF26 /* SnapshotTesting in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -66,6 +88,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7C8AC04B2E623FB800AEBF26 /* SnapshotTesting in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,9 +98,11 @@
 		7C8ABFF62E61E8D900AEBF26 = {
 			isa = PBXGroup;
 			children = (
+				7C40A0B72E6575E900A9AD3C /* README.md */,
 				7C8AC0012E61E8D900AEBF26 /* CountryApp */,
 				7C8AC0112E61E8DB00AEBF26 /* CountryAppTests */,
 				7C8AC01B2E61E8DB00AEBF26 /* CountryAppUITests */,
+				7C8AC0512E6243E300AEBF26 /* Frameworks */,
 				7C8AC0002E61E8D900AEBF26 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -90,6 +115,13 @@
 				7C8AC0182E61E8DB00AEBF26 /* CountryAppUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		7C8AC0512E6243E300AEBF26 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -135,6 +167,8 @@
 			);
 			name = CountryAppTests;
 			packageProductDependencies = (
+				7C8AC04D2E62401500AEBF26 /* ViewInspector */,
+				7C8AC0522E6243E300AEBF26 /* SnapshotTesting */,
 			);
 			productName = CountryAppTests;
 			productReference = 7C8AC00E2E61E8DB00AEBF26 /* CountryAppTests.xctest */;
@@ -158,6 +192,7 @@
 			);
 			name = CountryAppUITests;
 			packageProductDependencies = (
+				7C8AC04A2E623FB800AEBF26 /* SnapshotTesting */,
 			);
 			productName = CountryAppUITests;
 			productReference = 7C8AC0182E61E8DB00AEBF26 /* CountryAppUITests.xctest */;
@@ -195,6 +230,10 @@
 			);
 			mainGroup = 7C8ABFF62E61E8D900AEBF26;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				7C8AC0492E623FB800AEBF26 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
+				7C8AC04C2E62401500AEBF26 /* XCRemoteSwiftPackageReference "ViewInspector" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7C8AC0002E61E8D900AEBF26 /* Products */;
 			projectDirPath = "";
@@ -399,7 +438,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = UUMT2NKYK8;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "$(SRCROOT)/CountryApp/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -410,8 +450,12 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.CountryApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zb.CountryApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -427,7 +471,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = UUMT2NKYK8;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "$(SRCROOT)/CountryApp/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -438,8 +483,12 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.CountryApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zb.CountryApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -456,7 +505,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.CountryAppTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zb.CountryAppTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -475,7 +524,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.CountryAppTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zb.CountryAppTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -492,7 +541,7 @@
 				DEVELOPMENT_TEAM = UUMT2NKYK8;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.CountryAppUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zb.CountryAppUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -509,7 +558,7 @@
 				DEVELOPMENT_TEAM = UUMT2NKYK8;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.CountryAppUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zb.CountryAppUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -558,6 +607,43 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		7C8AC0492E623FB800AEBF26 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-snapshot-testing";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.18.6;
+			};
+		};
+		7C8AC04C2E62401500AEBF26 /* XCRemoteSwiftPackageReference "ViewInspector" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/nalexn/ViewInspector.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.10.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		7C8AC04A2E623FB800AEBF26 /* SnapshotTesting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7C8AC0492E623FB800AEBF26 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
+			productName = SnapshotTesting;
+		};
+		7C8AC04D2E62401500AEBF26 /* ViewInspector */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7C8AC04C2E62401500AEBF26 /* XCRemoteSwiftPackageReference "ViewInspector" */;
+			productName = ViewInspector;
+		};
+		7C8AC0522E6243E300AEBF26 /* SnapshotTesting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7C8AC0492E623FB800AEBF26 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
+			productName = SnapshotTesting;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 7C8ABFF72E61E8D900AEBF26 /* Project object */;
 }
